@@ -1,3 +1,5 @@
+# apigee-config
+
 This folder contains all the configurations for Apigee (like KVMs, API Products,...)
 
 <typeofconfig>-<configname>
