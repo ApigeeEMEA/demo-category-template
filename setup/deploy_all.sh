@@ -27,7 +27,30 @@ else
   echo "Verfied! Proceeding with deployment."
 fi;
 
-echo Deploying all samples to $APIGEE_ENV using $APIGEE_USERNAME and $APIGEE_ORGANIZATION
+echo Deploying all Configs Items (KVM, Cache, Target Servers,..) to $APIGEE_ENV using $APIGEE_USERNAME and $APIGEE_ORGANIZATION
+
+cd ../apigee-config/
+
+for shs in *.sh; do
+  source "$shs" -H 
+done
+
+cd ../
+
+echo Deploying all Shared Flows to $APIGEE_ENV using $APIGEE_USERNAME and $APIGEE_ORGANIZATION
+
+cd ../apigee-sharedflows/
+
+for sharedflowdir in *; do
+    if [ -d "${sharedflowdir}" ]; then
+        #../tools/deploy.py -n $proxydir -u $username:$password -o $org -e $env -p / -d $proxydir -h $url
+        apigeetool deploySharedFlow -o $APIGEE_ORGANIZATION -u $APIGEE_USERNAME -p $APIGEE_PASSWORD -e $APIGEE_ENV -n $sharedflowdir -d $sharedflowdir
+    fi
+done
+
+cd ../
+
+echo Deploying all API Proxies to $APIGEE_ENV using $APIGEE_USERNAME and $APIGEE_ORGANIZATION
 
 cd ../apigee-apiproxies/
 
@@ -37,14 +60,6 @@ for proxydir in *; do
         apigeetool deployproxy -o $APIGEE_ORGANIZATION -u $APIGEE_USERNAME -p $APIGEE_PASSWORD -e $APIGEE_ENV -n $proxydir -d $proxydir
     fi
 done
-
-: <<'END'
-cd ../apigee-config/
-
-for shs in *.sh; do
-  source "$shs" -H 
-done
-END
 
 cd ../setup/
 
